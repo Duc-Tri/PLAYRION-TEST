@@ -27,7 +27,7 @@ public class MachineWithQueue : MonoBehaviour
     [SerializeField][Range(0, 99)] public float makingTicketTime;
 
     private bool makingTicket;
-    private float speed;
+    private float ticketsByMinute; // nb of tickets by minute
 
     // Max des gens dans la queue, pour ne pas générer de positions abérantes  
     private const int MAX_LINE_CAPACITY = 5;
@@ -43,7 +43,7 @@ public class MachineWithQueue : MonoBehaviour
     {
         passengersInLine = new Queue<Passenger>();
         machine = GetComponent<VendingMachine>();
-        speed = machine.Speed;
+        ticketsByMinute = machine.Speed;
         makingTicket = false;
 
         if (makingTicketTime < 0.1f) // permet de tester d'autres valeurs
@@ -184,11 +184,11 @@ public class MachineWithQueue : MonoBehaviour
 
     public void ComputeRealMakingTicketTime()
     {
-        makingTicketTime = speed * 60f;
+        makingTicketTime = 60f / ticketsByMinute;
         waitForSeconds = new WaitForSeconds(makingTicketTime);
         UpdateGUI();
 
-        Debug.Log("ComputeRealMakingTicketTime SPEED=" + speed + " MTTime=" + makingTicketTime);
+        Debug.Log("ComputeRealMakingTicketTime SPEED=" + ticketsByMinute + " MTTime=" + makingTicketTime);
     }
 
     private void OnCancelEverything()
@@ -204,7 +204,7 @@ public class MachineWithQueue : MonoBehaviour
 
     internal void SetSpeed(float s)
     {
-        speed = s; // cannot set to vendingmachine !!!
+        ticketsByMinute = s; // cannot set to vendingmachine !!!
 
         ComputeRealMakingTicketTime();
     }
